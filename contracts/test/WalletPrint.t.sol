@@ -14,34 +14,56 @@ contract WalletPrintTest is Test {
         walletPrint = new WalletPrint();
     }
 
+    function commitAndReveal(address minter, bytes32 secret) internal {
+        vm.prank(minter);
+        walletPrint.commitMint(keccak256(abi.encode(secret, minter)));
+        vm.roll(block.number + 1);
+        vm.prank(minter);
+        walletPrint.revealMint(secret);
+    }
+
     function testMintStoresSeedAndIncrementsSupply() public {
-        vm.prank(alice);
-        walletPrint.mint();
+        commitAndReveal(alice, bytes32(uint256(1)));
 
         assertEq(walletPrint.totalSupply(), 1);
         assertTrue(walletPrint.hasMinted(alice));
+        assertEq(walletPrint.mintedTokenId(alice), 1);
         assertNotEq(walletPrint.tokenSeed(1), bytes32(0));
         assertEq(walletPrint.ownerOf(1), alice);
+        assertTrue(bytes(walletPrint.tokenURI(1)).length > 0);
     }
 
     function testMintRevertsForDuplicateWallet() public {
-        vm.prank(alice);
-        walletPrint.mint();
+        commitAndReveal(alice, bytes32(uint256(1)));
 
         vm.expectRevert("already minted");
         vm.prank(alice);
-        walletPrint.mint();
+        walletPrint.commitMint(keccak256(abi.encode(bytes32(uint256(2)), alice)));
     }
 
     function testMintRevertsWhenSoldOut() public {
-        for (uint256 i = 0; i < 6767; i++) {
-            address minter = vm.addr(uint256(keccak256(abi.encode(i))));
-            vm.prank(minter);
-            walletPrint.mint();
-        }
+        vm.store(address(walletPrint), bytes32(uint256(7)), bytes32(uint256(6767)));
 
+        bytes32 bobSecret = bytes32(uint256(1));
+        vm.prank(bob);
+        walletPrint.commitMint(keccak256(abi.encode(bobSecret, bob)));
+
+        vm.roll(block.number + 1);
         vm.expectRevert("sold out");
         vm.prank(bob);
-        walletPrint.mint();
+        walletPrint.revealMint(bobSecret);
+    }
+
+    function testPauseBlocksMintUntilUnpaused() public {
+        walletPrint.pause();
+
+        vm.expectRevert();
+        vm.prank(alice);
+        walletPrint.commitMint(keccak256(abi.encode(bytes32(uint256(1)), alice)));
+
+        walletPrint.unpause();
+        commitAndReveal(alice, bytes32(uint256(1)));
+
+        assertEq(walletPrint.totalSupply(), 1);
     }
 }

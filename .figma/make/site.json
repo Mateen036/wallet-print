@@ -1,7 +1,8 @@
 {
-  "description": "Create unique generative art NFTs based on blockchain participation, offering users a minimalistic and immersive art-first minting experience.",
+  "title": "Wallet Print — Your Wallet, Turned Into Art",
+  "description": "Mint a deterministic generative print from your wallet identity. One wallet, one on-chain artwork.",
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
     "addBypassLinks": false,

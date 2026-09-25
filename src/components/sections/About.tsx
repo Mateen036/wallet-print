@@ -1,12 +1,14 @@
 import { ArtworkCanvas } from '../ArtworkCanvas';
 import { seedFromTokenId } from '../../generator/index';
+import { walletPrintChain } from '../../lib/chain';
 
 export function About() {
   return (
     <section id="about" className="px-6 py-32 max-w-4xl mx-auto">
       <div className="grid md:grid-cols-2 gap-16 items-start">
         <div className="space-y-8">
-          <h2 className="font-display text-[clamp(2rem,6vw,5rem)] font-black leading-none tracking-tight text-white uppercase">
+          <p className="section-kicker mb-3">/ 04 — the premise</p>
+          <h2 className="font-display text-[clamp(2rem,6vw,5rem)] font-black leading-none tracking-tight text-[#f4f0e8] uppercase">
             ABOUT
           </h2>
 
@@ -35,10 +37,10 @@ export function About() {
           <div className="pt-4 space-y-3">
             {[
               ['COLLECTION',   '6,767 PRINTS'],
-              ['BLOCKCHAIN',   'ROBINHOOD CHAIN'],
+              ['BLOCKCHAIN',   walletPrintChain.name],
               ['CONTRACT',     'ERC-721'],
-              ['ARTWORK',      'ON-CHAIN SVG'],
-              ['RANDOMNESS',   'PREVRANDAO + KECCAK256'],
+              ['ARTWORK',      'DETERMINISTIC SVG'],
+              ['RANDOMNESS',   'COMMIT-REVEAL + KECCAK256'],
             ].map(([label, value]) => (
               <div key={label} className="flex justify-between items-center py-2 border-b border-white/6">
                 <span className="font-mono text-[9px] tracking-[0.2em] text-white/20 uppercase">{label}</span>
@@ -52,13 +54,11 @@ export function About() {
               SECURITY NOTE
             </p>
             <p className="font-mono text-[9px] text-white/18 leading-relaxed">
-              Artwork seeds are derived from{' '}
-              <code className="bg-white/5 px-1">block.prevrandao</code>,
-              the minter address, and token ID via keccak256.
-              A validator on the chain could, in principle, time their mint
-              to influence their seed. For an experimental art project on testnet,
-              this is an accepted assumption. The security model will be revisited
-              before mainnet deployment.
+              Artwork seeds combine a wallet-held secret with the minter address,
+              token ID, commitment block hash, and chain randomness via keccak256.
+              The secret is committed before it is revealed, reducing the ability
+              of a validator to predict the final print. The protocol should still
+              be independently audited before mainnet deployment.
             </p>
           </div>
         </div>

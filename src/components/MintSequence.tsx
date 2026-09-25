@@ -124,7 +124,7 @@ function RevealScreen({ seed, tokenId, traits, result, onClose }: RevealScreenPr
         </p>
 
         <div
-          className="relative"
+          className="relative mint-reveal-artwork"
           style={{
             boxShadow: '0 0 60px rgba(255,255,255,0.03)',
           }}

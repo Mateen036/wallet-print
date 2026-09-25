@@ -29,7 +29,7 @@ export function extractTraits(rng: SeededRandom, activeCells: number, corners: n
   else density = 'Dense';
 
   return {
-    paletteIndex: rng.int(12),
+    paletteIndex: rng.int(16),
     pattern: PATTERNS[rng.int(5)],
     printMode: PRINT_MODES[rng.int(4)],
     distortion: DISTORTIONS[rng.int(4)],

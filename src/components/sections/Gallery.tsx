@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { ArtworkCanvas } from '../ArtworkCanvas';
 import { generate, seedFromTokenId } from '../../generator/index';
 
@@ -13,12 +13,12 @@ function PrintCard({ tokenId, onSelect }: PrintCardProps) {
   return (
     <button
       onClick={() => onSelect(tokenId)}
-      className="group text-left focus:outline-none focus:ring-1 focus:ring-white/30"
+      className="group w-full text-left focus:outline-none focus:ring-1 focus:ring-white/30"
     >
-      <div className="relative overflow-hidden border border-white/6 group-hover:border-white/20 transition-colors">
-        <ArtworkCanvas seed={seedFromTokenId(tokenId)} tokenId={tokenId} size={200} className="w-full" />
+      <div className="relative overflow-hidden border border-[#f4f0e8]/10 bg-[#f4f0e8]/[0.03] group-hover:border-[#24b5d8]/70 transition-colors">
+        <ArtworkCanvas seed={seedFromTokenId(tokenId)} tokenId={tokenId} size={200} className="gallery-artwork transition-transform duration-700 ease-out group-hover:scale-110" />
       </div>
-      <p className="font-mono text-[9px] tracking-[0.2em] text-white/25 mt-2 group-hover:text-white/50 transition-colors">
+      <p className="font-mono text-[9px] tracking-[0.2em] text-[#f4f0e8]/35 mt-2 group-hover:text-[#c5ff4e] transition-colors">
         #{String(tokenId).padStart(4, '0')}
       </p>
     </button>
@@ -85,15 +85,16 @@ export function Gallery() {
   return (
     <section id="gallery" className="px-6 py-32 max-w-6xl mx-auto">
       <div className="mb-12">
-        <h2 className="font-display text-[clamp(2rem,6vw,5rem)] font-black leading-none tracking-tight text-white uppercase mb-3">
+        <p className="section-kicker mb-3">/ 02 — observed outputs</p>
+        <h2 className="font-display text-[clamp(2rem,6vw,5rem)] font-black leading-none tracking-tight text-[#f4f0e8] uppercase mb-3">
           THE PRINTS
         </h2>
-        <p className="font-mono text-[10px] tracking-[0.3em] text-white/25 uppercase">
+        <p className="font-mono text-[10px] tracking-[0.3em] text-[#f4f0e8]/40 uppercase">
           {PREVIEW_COUNT} of {(6767).toLocaleString()} shown
         </p>
       </div>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
         {Array.from({ length: PREVIEW_COUNT }, (_, i) => (
           <PrintCard key={i + 1} tokenId={i + 1} onSelect={setSelected} />
         ))}

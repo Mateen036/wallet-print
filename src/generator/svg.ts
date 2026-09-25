@@ -1,6 +1,7 @@
 import type { Palette } from './palettes';
 import { getPaletteColor } from './palettes';
 import type { Plate, PlateId } from './layers';
+import type { GeomRect } from './geometry';
 import type { TransformMap } from './distortion';
 import type { Pattern } from './traits';
 
@@ -51,17 +52,44 @@ function renderPlate(
   const color = getPaletteColor(palette, plate.id as PlateId);
   const { dx, dy, angle } = transform;
 
-  // Inset for Grid/Fragment patterns so the underlying grid shows through
+  // Inset for small repeated forms so the underlying grid remains visible.
   const inset = pattern === 'Grid' || pattern === 'Fragments' ? 3 : 0;
 
-  const rects = plate.rects.map(({ x, y, w, h }) => {
+  const shapes = plate.rects.map((geometry: GeomRect) => {
+    const { x, y, w, h, shape = 'rect' } = geometry;
     const sv = cellToSVG(x, y);
-    return `<rect x="${sv.x + inset}" y="${sv.y + inset}" width="${w * CELL - inset * 2}" height="${h * CELL - inset * 2}" fill="${color}"/>`;
+    const width = w * CELL - inset * 2;
+    const height = h * CELL - inset * 2;
+    const cx = sv.x + w * CELL / 2;
+    const cy = sv.y + h * CELL / 2;
+
+    if (shape === 'circle') {
+      return `<circle cx="${cx}" cy="${cy}" r="${Math.max(3, Math.min(width, height) / 2)}" fill="${color}"/>`;
+    }
+
+    if (shape === 'diamond') {
+      return `<polygon points="${cx},${sv.y + inset} ${sv.x + w * CELL - inset},${cy} ${cx},${sv.y + h * CELL - inset} ${sv.x + inset},${cy}" fill="${color}"/>`;
+    }
+
+    if (shape === 'hex') {
+      const radius = Math.min(width, height) / 2;
+      const points = Array.from({ length: 6 }, (_, index) => {
+        const angle = Math.PI / 3 * index - Math.PI / 6;
+        return `${(cx + Math.cos(angle) * radius).toFixed(2)},${(cy + Math.sin(angle) * radius).toFixed(2)}`;
+      }).join(' ');
+      return `<polygon points="${points}" fill="${color}"/>`;
+    }
+
+    if (shape === 'line') {
+      return `<line x1="${sv.x}" y1="${cy}" x2="${sv.x + w * CELL}" y2="${cy}" stroke="${color}" stroke-width="${Math.max(4, height * 0.72)}"/>`;
+    }
+
+    return `<rect x="${sv.x + inset}" y="${sv.y + inset}" width="${width}" height="${height}" fill="${color}"/>`;
   }).join('');
 
   const transformAttr = `translate(${dx.toFixed(2)},${dy.toFixed(2)}) rotate(${angle.toFixed(3)},${SIZE / 2},${SIZE / 2})`;
 
-  return `<g transform="${transformAttr}" opacity="${plate.opacity}">${rects}</g>`;
+  return `<g transform="${transformAttr}" opacity="${plate.opacity}">${shapes}</g>`;
 }
 
 // --- Grid overlay (very subtle, printed in K color) ---

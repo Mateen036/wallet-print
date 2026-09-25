@@ -7,13 +7,18 @@ export const WALLET_PRINT_ADDRESS =
   (import.meta.env.VITE_WALLET_PRINT_ADDRESS as `0x${string}` | undefined) ?? ZERO_ADDRESS;
 
 export const WALLET_PRINT_ABI = parseAbi([
-  'function mint() external',
+  'function commitMint(bytes32 commitment) external',
+  'function revealMint(bytes32 secret) external',
   'function totalSupply() view returns (uint256)',
   'function maxSupply() view returns (uint256)',
   'function balanceOf(address owner) view returns (uint256)',
   'function tokenURI(uint256 tokenId) view returns (string)',
   'function hasMinted(address) view returns (bool)',
+  'function mintedTokenId(address) view returns (uint256)',
+  'function mintCommitment(address) view returns (bytes32)',
+  'function commitmentBlock(address) view returns (uint256)',
   'function tokenSeed(uint256) view returns (bytes32)',
+  'event MintCommitted(address indexed to, bytes32 commitment, uint256 commitmentBlock)',
   'event Minted(address indexed to, uint256 indexed tokenId, bytes32 tokenSeed)',
 ]) as Abi;
 

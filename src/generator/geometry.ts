@@ -1,12 +1,15 @@
 import type { Grid } from './grid';
 import type { Pattern } from './traits';
 
+export type GeomShape = 'rect' | 'circle' | 'diamond' | 'hex' | 'line';
+
 export interface GeomRect {
   x: number; // grid column index [0, 15]
   y: number; // grid row index [0, 15]
   w: number; // width in cells
   h: number; // height in cells
   area: number; // active cells in component (used for sorting)
+  shape?: GeomShape;
 }
 
 // --- Connected-component extraction ---
@@ -65,7 +68,7 @@ function buildGrid(grid: Grid): GeomRect[] {
   const rects: GeomRect[] = [];
   for (let r = 0; r < 16; r++) {
     for (let c = 0; c < 16; c++) {
-      if (grid[r][c]) rects.push({ x: c, y: r, w: 1, h: 1, area: 1 });
+      if (grid[r][c]) rects.push({ x: c, y: r, w: 1, h: 1, area: 1, shape: 'circle' });
     }
   }
   return rects;
@@ -77,7 +80,7 @@ function buildStripes(grid: Grid): GeomRect[] {
     const activeCols = grid[r].filter(Boolean).length;
     if (activeCols >= 8) {
       // Full-width horizontal band
-      rects.push({ x: 0, y: r, w: 16, h: 1, area: activeCols });
+      rects.push({ x: 0, y: r, w: 16, h: 1, area: activeCols, shape: 'line' });
     } else if (activeCols >= 3) {
       // Find the span from first to last active col
       let start = -1, end = -1;
@@ -88,7 +91,7 @@ function buildStripes(grid: Grid): GeomRect[] {
         }
       }
       if (start !== -1) {
-        rects.push({ x: start, y: r, w: end - start + 1, h: 1, area: activeCols });
+        rects.push({ x: start, y: r, w: end - start + 1, h: 1, area: activeCols, shape: 'line' });
       }
     }
   }
@@ -107,6 +110,7 @@ function buildFragments(grid: Grid): GeomRect[] {
           w: 1,
           h: 1,
           area: 1,
+          shape: 'diamond',
         }))
   );
 }
@@ -115,7 +119,9 @@ function buildClusters(grid: Grid): GeomRect[] {
   // Keep only the N largest components
   const components = findConnectedComponents(grid);
   const minArea = components.length > 4 ? components[Math.floor(components.length * 0.4)].area : 1;
-  return components.filter(c => c.area >= Math.max(4, minArea));
+  return components
+    .filter(c => c.area >= Math.max(4, minArea))
+    .map(c => ({ ...c, shape: 'hex' as const }));
 }
 
 // --- Public dispatcher ---

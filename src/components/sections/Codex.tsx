@@ -13,13 +13,13 @@ const PIPELINE = [
     id: 'mint',
     label: 'MINT',
     description:
-      'A mint transaction is broadcast. The contract records your address and assigns a sequential token ID.',
+      'Your wallet commits a secret hash first. After one block, you reveal the secret and the contract assigns a sequential token ID.',
   },
   {
     id: 'seed',
     label: 'SEED',
     description:
-      'The contract combines your address, the token ID, and block randomness (RANDAO) via keccak256 to produce a 32-byte seed. This is stored on-chain and is permanent.',
+      'The contract combines your revealed secret, address, token ID, block randomness, and the commitment block hash via keccak256 to produce a 32-byte seed. This is stored on-chain and is permanent.',
   },
   {
     id: 'bits',
@@ -61,10 +61,11 @@ export function Codex() {
   return (
     <section id="codex" className="px-6 py-32 max-w-4xl mx-auto">
       <div className="mb-16">
-        <h2 className="font-display text-[clamp(2rem,6vw,5rem)] font-black leading-none tracking-tight text-white uppercase mb-3">
+        <p className="section-kicker mb-3">/ 03 — how a wallet becomes a print</p>
+        <h2 className="font-display text-[clamp(2rem,6vw,5rem)] font-black leading-none tracking-tight text-[#f4f0e8] uppercase mb-3">
           THE ALGORITHM
         </h2>
-        <p className="font-mono text-[10px] tracking-[0.3em] text-white/25 uppercase">
+        <p className="font-mono text-[10px] tracking-[0.3em] text-[#f4f0e8]/40 uppercase">
           Hover to inspect each stage
         </p>
       </div>

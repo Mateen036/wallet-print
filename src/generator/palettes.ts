@@ -121,6 +121,42 @@ export const PALETTES: Palette[] = [
     y: '#333333',
     dark: true,
   },
+  {
+    name: 'NEON-13',
+    bg: '#F2F0E6',
+    k: '#17151F',
+    c: '#00B8D9',
+    m: '#FF3D81',
+    y: '#B8F000',
+    dark: false,
+  },
+  {
+    name: 'EMBER-14',
+    bg: '#FFF1DE',
+    k: '#29120C',
+    c: '#007C91',
+    m: '#E43D30',
+    y: '#FF9E1B',
+    dark: false,
+  },
+  {
+    name: 'SIGNAL-15',
+    bg: '#10151B',
+    k: '#F7F3E8',
+    c: '#00D9FF',
+    m: '#FF4FA3',
+    y: '#D4FF3F',
+    dark: true,
+  },
+  {
+    name: 'VIOLET-16',
+    bg: '#120D20',
+    k: '#FFF4D6',
+    c: '#2ED8FF',
+    m: '#A66CFF',
+    y: '#FFCA3A',
+    dark: true,
+  },
 ];
 
 export function getPaletteColor(palette: Palette, plateId: 'K' | 'C' | 'M' | 'Y'): string {

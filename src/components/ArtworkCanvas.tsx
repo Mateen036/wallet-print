@@ -82,7 +82,7 @@ export function ArtworkCanvas({
   return (
     <div
       ref={svgRef}
-      className={className}
+      className={`artwork-canvas ${className}`}
       style={{ width: size, height: size, flexShrink: 0 }}
       dangerouslySetInnerHTML={{ __html: result.svg }}
     />

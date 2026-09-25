@@ -13,16 +13,31 @@
 
 html {
   scroll-behavior: smooth;
-  background-color: #080808;
-  color: #F2F2F2;
+  background-color: #101311;
+  color: #f4f0e8;
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #080808;
-  color: #F2F2F2;
+  background-color: #101311;
+  color: #f4f0e8;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image: linear-gradient(rgba(244, 240, 232, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 240, 232, 0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+  z-index: 0;
 }
 
 ::-webkit-scrollbar { width: 4px; }
@@ -31,7 +46,76 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
 .bg-radial-gradient {
-  background: radial-gradient(ellipse at center, transparent 20%, #080808 80%);
+  background: radial-gradient(ellipse at center, transparent 18%, rgba(16, 19, 17, 0.9) 78%, #101311 100%);
+}
+
+.paper-shadow { box-shadow: 18px 18px 0 rgba(197, 255, 78, 0.12); }
+
+.section-kicker {
+  color: #c5ff4e;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.artwork-canvas > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.gallery-artwork {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 1;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 800ms ease, transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mint-reveal-artwork {
+  animation: mint-reveal 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes mint-reveal {
+  from { opacity: 0; transform: scale(0.88) rotate(-4deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .mint-artwork {
+    width: min(100%, 340px) !important;
+    height: auto !important;
+    aspect-ratio: 1;
+  }
+
+  .mint-artwork > svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 *:focus-visible {
@@ -40,8 +124,8 @@ body {
 }
 
 ::selection {
-  background: rgba(255,255,255,0.15);
-  color: #F2F2F2;
+  background: #c5ff4e;
+  color: #101311;
 }
 
 .font-display { font-family: var(--font-display); }
