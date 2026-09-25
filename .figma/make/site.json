@@ -1,0 +1,10 @@
+{
+  "description": "Create unique generative art NFTs based on blockchain participation, offering users a minimalistic and immersive art-first minting experience.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
