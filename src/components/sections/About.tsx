@@ -1,6 +1,7 @@
 import { ArtworkCanvas } from "../ArtworkCanvas"
 import { seedFromTokenId } from "../../generator/index"
 import { walletPrintChain } from "../../lib/chain"
+import { SocialLinks } from "../SocialLinks"
 
 export function About() {
   return (
@@ -86,6 +87,7 @@ export function About() {
         <span className="font-mono text-[9px] tracking-[0.3em] text-white/15 uppercase">
           WALLET PRINT
         </span>
+        <SocialLinks />
         <span className="font-mono text-[9px] tracking-[0.2em] text-white/10 uppercase">
           A generative art experiment — not an investment
         </span>
