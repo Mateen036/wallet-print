@@ -43,7 +43,9 @@ token and allows contracts up to 96 KB (so the full on-chain SVG generator fits)
 | Explorer | `https://robinhoodchain.blockscout.com` | `https://explorer.testnet.chain.robinhood.com` |
 | Faucet | — (bridge ETH with the Arbitrum canonical bridge) | `https://faucet.testnet.chain.robinhood.com` |
 
-Deploy and verify:
+### Deploy and verify
+
+#### Testnet (Chain ID 46630)
 
 ```bash
 cd contracts
@@ -60,11 +62,29 @@ forge verify-contract <address> src/WalletPrint.sol:WalletPrint \
   --watch
 ```
 
-Deployments:
+#### Mainnet (Chain ID 4663)
 
-| Network | Contract |
-| --- | --- |
-| Robinhood Chain testnet (46630) | `0xf0f055501841E1cB95Afbec8bF28A2b85B4953a3` |
+```bash
+cd contracts
+forge create src/WalletPrint.sol:WalletPrint \
+  --rpc-url https://rpc.mainnet.chain.robinhood.com \
+  --private-key $DEPLOYER_PRIVATE_KEY \
+  --broadcast
+
+forge verify-contract <address> src/WalletPrint.sol:WalletPrint \
+  --chain-id 4663 \
+  --rpc-url https://rpc.mainnet.chain.robinhood.com \
+  --verifier blockscout \
+  --verifier-url https://robinhoodchain.blockscout.com/api/ \
+  --watch
+```
+
+### Deployments
+
+| Network | Chain ID | Contract | Explorer |
+| --- | --- | --- | --- |
+| Robinhood Chain Testnet | `46630` | `0xf0f055501841E1cB95Afbec8bF28A2b85B4953a3` | [Blockscout](https://explorer.testnet.chain.robinhood.com/address/0xf0f055501841E1cB95Afbec8bF28A2b85B4953a3) |
+| Robinhood Chain Mainnet | `4663` | *TBD (deploy using command above)* | [Blockscout](https://robinhoodchain.blockscout.com) |
 
 ### What differs on this chain
 
