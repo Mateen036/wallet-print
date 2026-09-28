@@ -8,7 +8,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "format": "oxfmt",
-    "test": "node src/lib/commitment.test.ts && node src/generator/parity.test.ts"
+    "test": "node src/lib/commitment.test.ts && node src/generator/parity.test.ts",
+    "verify:prepare": "node scripts/prepare-verification-json.mjs",
+    "verify:check": "node scripts/verify-standard-json.mjs",
+    "verify:submit": "node scripts/submit-verification.mjs",
+    "verify:bytecode": "node scripts/compare-bytecode.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.0",

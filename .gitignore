@@ -3,6 +3,7 @@ dist/
 build/
 /contracts/cache/
 /contracts/out/
+/contracts/WalletPrint-standard-json-input.json
 .cache/
 .env*
 !.env.example

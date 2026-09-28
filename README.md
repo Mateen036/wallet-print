@@ -40,21 +40,32 @@ token and allows contracts up to 96 KB (so the full on-chain SVG generator fits)
 | --- | --- | --- |
 | Chain ID | `4663` | `46630` |
 | RPC | `https://rpc.mainnet.chain.robinhood.com` | `https://rpc.testnet.chain.robinhood.com` |
-| Explorer | `https://robinhoodchain.blockscout.com` | `https://explorer.testnet.chain.robinhood.com` |
+| Explorer | [RobinScan](https://robin.etherscan.io) | [Blockscout](https://explorer.testnet.chain.robinhood.com) |
 | Faucet | — (bridge ETH with the Arbitrum canonical bridge) | `https://faucet.testnet.chain.robinhood.com` |
+
+There is also a Robinhood-hosted Blockscout at
+`https://robinhoodchain.blockscout.com` for browsing, but its front end sits
+behind a Cloudflare challenge, so scripted verification against it fails (see
+[Verifying with standard JSON](#verifying-with-standard-json)).
 
 ### Deploy and verify
 
-#### Testnet (Chain ID 46630)
+Deploy with `forge create` from the repo root so the artifacts land in
+`contracts/out`:
 
 ```bash
 cd contracts
 forge create src/WalletPrint.sol:WalletPrint \
-  --rpc-url https://rpc.testnet.chain.robinhood.com \
+  --rpc-url <rpc> \
   --private-key $DEPLOYER_PRIVATE_KEY \
   --broadcast
+```
 
-forge verify-contract <address> src/WalletPrint.sol:WalletPrint \
+`forge verify-contract` works against the **testnet** explorer:
+
+```bash
+forge verify-contract 0xf0f055501841E1cB95Afbec8bF28A2b85B4953a3 \
+  src/WalletPrint.sol:WalletPrint \
   --chain-id 46630 \
   --rpc-url https://rpc.testnet.chain.robinhood.com \
   --verifier blockscout \
@@ -62,29 +73,76 @@ forge verify-contract <address> src/WalletPrint.sol:WalletPrint \
   --watch
 ```
 
-#### Mainnet (Chain ID 4663)
+It does **not** work against the mainnet Blockscout: that host sits behind a
+Cloudflare interstitial, so scripted requests get an HTML "Just a moment..." page
+instead of JSON and Forge fails with `Failed to deserialize response`.
+
+### Verifying with standard JSON
+
+`WalletPrint` is built with `via_ir = true` and the 200-run optimizer, so
+explorers need the exact settings. Rather than transcribing them into a web
+form, generate the payload and check it locally first:
 
 ```bash
-cd contracts
-forge create src/WalletPrint.sol:WalletPrint \
-  --rpc-url https://rpc.mainnet.chain.robinhood.com \
-  --private-key $DEPLOYER_PRIVATE_KEY \
-  --broadcast
+# 1. Regenerate the payload from the exact compiler input Foundry used.
+npm run verify:prepare
 
-forge verify-contract <address> src/WalletPrint.sol:WalletPrint \
-  --chain-id 4663 \
-  --rpc-url https://rpc.mainnet.chain.robinhood.com \
-  --verifier blockscout \
-  --verifier-url https://robinhoodchain.blockscout.com/api/ \
-  --watch
+# 2. Compile it with the same solc and diff the runtime bytecode against the
+#    chain. Prints "MATCH true" only if the explorer will be able to verify.
+npm run verify:check
+
+# 3. Submit it.
+npm run verify:submit    # Etherscan v2, needs ETHERSCAN_API_KEY
 ```
+
+| Script | Does |
+| --- | --- |
+| `verify:prepare` | Runs `forge inspect ... standardJson` and writes `contracts/WalletPrint-standard-json-input.json` |
+| `verify:check` | Compiles the payload with solc 0.8.25 and compares to `eth_getCode` |
+| `verify:submit` | Posts the payload to Etherscan (v2, chain 4663) or Blockscout and polls |
+| `verify:bytecode` | Compares `contracts/out` against the chain, for build-vs-deploy drift |
+
+`verify:prepare` and `verify:check` need no API key, so the payload can always
+be proven before it is uploaded. `verify:submit` also accepts `--blockscout` and
+`--testnet` to target those endpoints instead, though mainnet Blockscout is
+blocked by the Cloudflare challenge and the mainnet contract is already verified
+on RobinScan.
+
+Two payload details matter, and both are the reason a hand-rolled upload can
+report "Unable to find matching Contract Bytecode and ABI" even when the sources
+are right:
+
+- **`settings.experimental` must be removed.** Forge emits it; it is not part of
+  solc's standard-JSON schema, so solc aborts with `Unknown key "experimental"`
+  before comparing anything. `verify:prepare` strips it. This was the actual
+  cause of the original mainnet verification failure.
+- **`settings.compilationTarget` must not be sent to solc** — same
+  `Unknown key` failure. Etherscan's form does not need it, and
+  `verify:submit` passes Blockscout's target as a separate top-level field.
+
+Etherscan is reached through the v2 unified API with `chainid=4663`
+(`api.etherscan.io`); the chain-specific host `api.robin.etherscan.io` does not
+resolve. The Blockscout instances do not serve the v2
+`/verification/via/solidity-standard-json` route (it 404s), but they do serve the
+Etherscan-compatible v1 `verifysourcecode` API, which is what
+`verify:submit --blockscout` and `forge verify-contract --verifier blockscout`
+both use.
 
 ### Deployments
 
 | Network | Chain ID | Contract | Explorer |
 | --- | --- | --- | --- |
-| Robinhood Chain Testnet | `46630` | `0xf0f055501841E1cB95Afbec8bF28A2b85B4953a3` | [Blockscout](https://explorer.testnet.chain.robinhood.com/address/0xf0f055501841E1cB95Afbec8bF28A2b85B4953a3) |
-| Robinhood Chain Mainnet | `4663` | `0xF391057A5C8C5045b84147560dDE7Ef609625f8E` | [Blockscout](https://robinhoodchain.blockscout.com/address/0xF391057A5C8C5045b84147560dDE7Ef609625f8E) |
+| Robinhood Chain Mainnet | `4663` | `0xF391057A5C8C5045b84147560dDE7Ef609625f8E` | [RobinScan](https://robin.etherscan.io/address/0xF391057A5C8C5045b84147560dDE7Ef609625f8E#code) (verified, exact match) |
+| Robinhood Chain Testnet | `46630` | `0xf0f055501841E1cB95Afbec8bF28A2b85B4953a3` | [Blockscout](https://explorer.testnet.chain.robinhood.com/address/0xf0f055501841E1cB95Afbec8bF28A2b85B4953a3) (verified) |
+
+Both deployments were built with solc `0.8.25+commit.b61c2a91`, optimizer on at
+200 runs, `viaIR`, and `evmVersion` cancun.
+
+Mainnet is verified on RobinScan rather than the Robinhood Blockscout instance:
+Blockscout's mainnet front end sits behind a Cloudflare challenge, so scripted
+submissions are rejected, whereas `robin.etherscan.io` serves the standard
+Etherscan API. `npm run verify:check` reproduces the mainnet runtime bytecode
+byte for byte, which is what the explorer's "Exact Match" badge reports.
 
 ### What differs on this chain
 
@@ -106,6 +164,28 @@ forge verify-contract <address> src/WalletPrint.sol:WalletPrint \
 - **Code size**: `forge build --sizes` reports the contract above Ethereum's
   24 KB EIP-170 limit. That is expected and fine on Robinhood Chain (96 KB
   limit); it would not deploy to Ethereum as-is.
+
+### Known issue: `findConnectedComponents` overflows on a full grid
+
+`WalletPrintSVG.findConnectedComponents` runs a BFS with `uint8 head` / `uint8
+tail` over a fixed `uint8[256]` queue. A component can hold all 256 cells, at
+which point `tail++` wraps 255 → 256 and checked arithmetic reverts with
+`Panic(0x11)`, so `generateSVG` (and therefore `tokenURI`) reverts for that seed.
+
+The fuzz test `testTraitsAreInRange` hits it with the all-`0xFF` seed. Reaching
+it in production needs a commit whose block hash maps to the all-ones grid
+*and* the `Blocks` pattern, so it is not practically mintable, but it is a real
+brick. The fix is one line — widen the counters, since the queue is 256 deep:
+
+```solidity
+uint16 head = 0; uint16 tail = 0;
+```
+
+It is **not** fixed on the deployed contracts. Changing the source changes the
+bytecode, which would make `npm run verify:check` fail against
+`0xF391057A5C8C5045b84147560dDE7Ef609625f8E` — that is the check working
+correctly, not a regression. Fix and redeploy first, then regenerate the
+verification payload.
 
 ## Production deployment
 
