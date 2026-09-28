@@ -1,11 +1,17 @@
 {
-  "title": "Wallet Print — Your Wallet, Turned Into Art",
-  "description": "Mint a deterministic generative print from your wallet identity. One wallet, one on-chain artwork.",
+  "title": "Wallet Print",
+  "description": "Wallet Print turns a wallet identity into a deterministic generative print, minted on-chain via a two-step commit-reveal flow.",
+  "language": "en",
   "robots": {
     "index": true
   },
+  "icons": {
+    "icon": "/favicon.svg"
+  },
+  "openGraph": {
+    "image": "/og-image.png"
+  },
   "accessibility": {
-    "addBypassLinks": false,
-    "ignoreReducedMotion": false
+    "addBypassLinks": true
   }
 }

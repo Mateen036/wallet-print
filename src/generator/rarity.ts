@@ -1,4 +1,4 @@
-import type { SeededRandom } from './random';
+import type { SeededRandom } from "./random.ts"
 
 // Target distribution across 6,767 tokens:
 //   1 corner = 4000  (59.1%)
@@ -16,13 +16,13 @@ const THRESHOLDS = [
   6400 / 6767, // < this → 3 corners
   6700 / 6767, // < this → 4 corners
   // ≥ last → 5 corners
-] as const;
+] as const
 
 export function computeCorners(rng: SeededRandom): number {
-  const score = rng.next();
-  if (score < THRESHOLDS[0]) return 1;
-  if (score < THRESHOLDS[1]) return 2;
-  if (score < THRESHOLDS[2]) return 3;
-  if (score < THRESHOLDS[3]) return 4;
-  return 5;
+  const score = rng.next()
+  if (score < THRESHOLDS[0]) return 1
+  if (score < THRESHOLDS[1]) return 2
+  if (score < THRESHOLDS[2]) return 3
+  if (score < THRESHOLDS[3]) return 4
+  return 5
 }

@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "test": "node src/lib/commitment.test.ts && node src/generator/parity.test.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.0",

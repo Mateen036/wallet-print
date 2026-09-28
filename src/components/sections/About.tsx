@@ -1,6 +1,6 @@
-import { ArtworkCanvas } from '../ArtworkCanvas';
-import { seedFromTokenId } from '../../generator/index';
-import { walletPrintChain } from '../../lib/chain';
+import { ArtworkCanvas } from "../ArtworkCanvas"
+import { seedFromTokenId } from "../../generator/index"
+import { walletPrintChain } from "../../lib/chain"
 
 export function About() {
   return (
@@ -17,34 +17,38 @@ export function About() {
               A wallet is normally an identifier.
             </p>
             <p className="font-mono text-[11px] text-white/45 leading-[2] tracking-wide">
-              In Wallet Print, that identity becomes a visual seed.
-              Every aspect of your print — its structure, palette, and
-              registration — derives deterministically from the conditions
-              of your mint.
+              In Wallet Print, mint conditions become a visual seed. Structure,
+              palette, and registration are derived from a commit-reveal: your
+              secret, address, token ID, and block randomness hashed together.
             </p>
             <p className="font-mono text-[11px] text-white/45 leading-[2] tracking-wide">
-              Each mint produces one print.
-              6,767 participants.
-              6,767 outputs.
+              Each mint produces one print. 6,767 participants. 6,767 outputs.
               No two intended to be the same.
             </p>
             <p className="font-mono text-[11px] text-white/45 leading-[2] tracking-wide">
-              You do not choose the print.
-              You create the conditions for it to exist.
+              You do not choose the print. You create the conditions for it to
+              exist.
             </p>
           </div>
 
           <div className="pt-4 space-y-3">
             {[
-              ['COLLECTION',   '6,767 PRINTS'],
-              ['BLOCKCHAIN',   walletPrintChain.name],
-              ['CONTRACT',     'ERC-721'],
-              ['ARTWORK',      'DETERMINISTIC SVG'],
-              ['RANDOMNESS',   'COMMIT-REVEAL + KECCAK256'],
+              ["COLLECTION", "6,767 PRINTS"],
+              ["BLOCKCHAIN", walletPrintChain.name],
+              ["CONTRACT", "ERC-721"],
+              ["ARTWORK", "DETERMINISTIC SVG"],
+              ["RANDOMNESS", "COMMIT-REVEAL + KECCAK256"],
             ].map(([label, value]) => (
-              <div key={label} className="flex justify-between items-center py-2 border-b border-white/6">
-                <span className="font-mono text-[9px] tracking-[0.2em] text-white/20 uppercase">{label}</span>
-                <span className="font-mono text-[9px] tracking-[0.1em] text-white/40 uppercase">{value}</span>
+              <div
+                key={label}
+                className="flex justify-between items-center py-2 border-b border-white/6"
+              >
+                <span className="font-mono text-[9px] tracking-[0.2em] text-white/20 uppercase">
+                  {label}
+                </span>
+                <span className="font-mono text-[9px] tracking-[0.1em] text-white/40 uppercase">
+                  {value}
+                </span>
               </div>
             ))}
           </div>
@@ -54,20 +58,25 @@ export function About() {
               SECURITY NOTE
             </p>
             <p className="font-mono text-[9px] text-white/18 leading-relaxed">
-              Artwork seeds combine a wallet-held secret with the minter address,
-              token ID, commitment block hash, and chain randomness via keccak256.
-              The secret is committed before it is revealed, reducing the ability
-              of a validator to predict the final print. The protocol should still
-              be independently audited before mainnet deployment.
+              Artwork seeds combine a wallet-held secret with the minter
+              address, token ID, commitment block hash, and chain randomness via
+              keccak256. The secret is committed before it is revealed, reducing
+              the ability of a validator to predict the final print. The
+              protocol should still be independently audited before mainnet
+              deployment.
             </p>
           </div>
         </div>
 
         {/* Side artwork grid */}
         <div className="grid grid-cols-2 gap-3 md:sticky md:top-32">
-          {[100, 200, 300, 400].map(id => (
+          {[100, 200, 300, 400].map((id) => (
             <div key={id} className="border border-white/6">
-              <ArtworkCanvas seed={seedFromTokenId(id)} tokenId={id} size={160} />
+              <ArtworkCanvas
+                seed={seedFromTokenId(id)}
+                tokenId={id}
+                size={160}
+              />
             </div>
           ))}
         </div>
@@ -82,5 +91,5 @@ export function About() {
         </span>
       </footer>
     </section>
-  );
+  )
 }

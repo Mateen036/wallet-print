@@ -5,6 +5,7 @@ build/
 /contracts/out/
 .cache/
 .env*
+!.env.example
 .vite/
 vite.config.*.timestamp-*
 *.tsbuildinfo
@@ -21,5 +22,7 @@ logs/
 # beside it.
 /.plugins/
 /.opencode-skills/
+
+/.grok/
 
 .vercel

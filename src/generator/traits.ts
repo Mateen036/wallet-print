@@ -1,33 +1,41 @@
-import type { SeededRandom } from './random';
+import type { SeededRandom } from "./random.ts"
 
-export type Pattern = 'Grid' | 'Blocks' | 'Stripes' | 'Fragments' | 'Clusters';
-export type PrintMode = 'Registered' | 'Offset' | 'Drift' | 'Misaligned';
-export type DistortionLevel = 'None' | 'Low' | 'Medium' | 'High';
-export type Density = 'Sparse' | 'Light' | 'Medium' | 'Dense';
+export type Pattern = "Grid" | "Blocks" | "Stripes" | "Fragments" | "Clusters"
+export type PrintMode = "Registered" | "Offset" | "Drift" | "Misaligned"
+export type DistortionLevel = "None" | "Low" | "Medium" | "High"
+export type Density = "Sparse" | "Light" | "Medium" | "Dense"
 
 export interface Traits {
-  paletteIndex: number;
-  pattern: Pattern;
-  printMode: PrintMode;
-  distortion: DistortionLevel;
-  rotations: number;   // 0–3 × 90°
-  layerCount: number;  // 1–4
-  density: Density;
-  corners: number;     // 1–5
+  paletteIndex: number
+  pattern: Pattern
+  printMode: PrintMode
+  distortion: DistortionLevel
+  rotations: number // 0–3 × 90°
+  layerCount: number // 1–4
+  density: Density
+  corners: number // 1–5
 }
 
-const PATTERNS: Pattern[] = ['Grid', 'Blocks', 'Stripes', 'Fragments', 'Clusters'];
-const PRINT_MODES: PrintMode[] = ['Registered', 'Offset', 'Drift', 'Misaligned'];
-const DISTORTIONS: DistortionLevel[] = ['None', 'Low', 'Medium', 'High'];
+const PATTERNS: Pattern[] = [
+  "Grid",
+  "Blocks",
+  "Stripes",
+  "Fragments",
+  "Clusters",
+]
+const PRINT_MODES: PrintMode[] = ["Registered", "Offset", "Drift", "Misaligned"]
+const DISTORTIONS: DistortionLevel[] = ["None", "Low", "Medium", "High"]
+const DENSITIES: Density[] = ["Sparse", "Light", "Medium", "Dense"]
 
-export function extractTraits(rng: SeededRandom, activeCells: number, corners: number): Traits {
-  const ratio = activeCells / 256;
-  let density: Density;
-  if (ratio < 0.25) density = 'Sparse';
-  else if (ratio < 0.45) density = 'Light';
-  else if (ratio < 0.65) density = 'Medium';
-  else density = 'Dense';
-
+export function extractTraits(rng: SeededRandom, corners: number): Traits {
+  // Density is drawn from the PRNG, not derived from the active-cell ratio.
+  // A keccak-uniform seed makes the 16x16 bit count ~Binomial(256, 0.5), so the
+  // ratio only ever lands around 0.35-0.63. Thresholding it left 'Sparse' and
+  // 'Dense' unreachable (0 of 20,000 samples) and 'Medium' covering ~94% of
+  // tokens while the metadata advertised four tiers.
+  //
+  // The draw is appended last so every other trait keeps its existing value for
+  // a given seed — only density changes.
   return {
     paletteIndex: rng.int(16),
     pattern: PATTERNS[rng.int(5)],
@@ -35,7 +43,7 @@ export function extractTraits(rng: SeededRandom, activeCells: number, corners: n
     distortion: DISTORTIONS[rng.int(4)],
     rotations: rng.int(4),
     layerCount: rng.int(4) + 1,
-    density,
+    density: DENSITIES[rng.int(4)],
     corners,
-  };
+  }
 }

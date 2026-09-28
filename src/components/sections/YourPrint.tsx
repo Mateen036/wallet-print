@@ -1,16 +1,21 @@
-import { ArtworkCanvas } from '../ArtworkCanvas';
-import { generate } from '../../generator/index';
+import { ArtworkCanvas } from "../ArtworkCanvas"
+import { generate } from "../../generator/index"
 
 interface YourPrintProps {
-  walletConnected?: boolean;
-  tokenId?: number | null;
-  seed?: string | null;
-  onConnectWallet?: () => void;
+  walletConnected?: boolean
+  tokenId?: number | null
+  seed?: string | null
+  onConnectWallet?: () => void
 }
 
-export function YourPrint({ walletConnected = false, tokenId = null, seed = null, onConnectWallet }: YourPrintProps) {
-  const hasPrint = walletConnected && tokenId !== null && seed !== null;
-  const result = hasPrint ? generate(seed!, tokenId!) : null;
+export function YourPrint({
+  walletConnected = false,
+  tokenId = null,
+  seed = null,
+  onConnectWallet,
+}: YourPrintProps) {
+  const hasPrint = walletConnected && tokenId !== null && seed !== null
+  const result = hasPrint ? generate(seed!, tokenId!) : null
 
   return (
     <section id="yourprint" className="px-6 py-32 max-w-4xl mx-auto">
@@ -24,10 +29,18 @@ export function YourPrint({ walletConnected = false, tokenId = null, seed = null
         <div className="border border-white/8 p-12 flex flex-col items-center gap-6 text-center">
           {/* Placeholder grid */}
           <div
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(8,8px)', gap: '3px', opacity: 0.08 }}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(8,8px)",
+              gap: "3px",
+              opacity: 0.08,
+            }}
           >
             {Array.from({ length: 64 }, (_, i) => (
-              <div key={i} style={{ width: 8, height: 8, background: 'white' }} />
+              <div
+                key={i}
+                style={{ width: 8, height: 8, background: "white" }}
+              />
             ))}
           </div>
           <div className="space-y-2">
@@ -66,21 +79,30 @@ export function YourPrint({ walletConnected = false, tokenId = null, seed = null
                 WALLET PRINT
               </p>
               <h3 className="font-display text-4xl font-black tracking-tight text-white uppercase">
-                #{String(tokenId).padStart(4, '0')}
+                #{String(tokenId).padStart(4, "0")}
               </h3>
             </div>
 
             <div className="space-y-0">
               {result!.metadata.attributes.map(({ trait_type, value }) => (
-                <div key={trait_type} className="flex justify-between items-center py-2.5 border-b border-white/6">
-                  <span className="font-mono text-[9px] tracking-[0.2em] text-white/25 uppercase">{trait_type}</span>
-                  <span className="font-mono text-[9px] tracking-[0.1em] text-white/55 uppercase">{value}</span>
+                <div
+                  key={trait_type}
+                  className="flex justify-between items-center py-2.5 border-b border-white/6"
+                >
+                  <span className="font-mono text-[9px] tracking-[0.2em] text-white/25 uppercase">
+                    {trait_type}
+                  </span>
+                  <span className="font-mono text-[9px] tracking-[0.1em] text-white/55 uppercase">
+                    {value}
+                  </span>
                 </div>
               ))}
             </div>
 
             <div className="space-y-2">
-              <p className="font-mono text-[9px] tracking-[0.2em] text-white/15 uppercase">SEED</p>
+              <p className="font-mono text-[9px] tracking-[0.2em] text-white/15 uppercase">
+                SEED
+              </p>
               <p className="font-mono text-[7px] text-white/12 break-all leading-relaxed">
                 {seed}
               </p>
@@ -89,5 +111,5 @@ export function YourPrint({ walletConnected = false, tokenId = null, seed = null
         </div>
       )}
     </section>
-  );
+  )
 }

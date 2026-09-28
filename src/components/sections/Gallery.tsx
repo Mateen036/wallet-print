@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { ArtworkCanvas } from '../ArtworkCanvas';
-import { generate, seedFromTokenId } from '../../generator/index';
+import { useEffect, useState } from "react"
+import { ArtworkCanvas } from "../ArtworkCanvas"
+import { generate, seedFromTokenId } from "../../generator/index"
 
-const PREVIEW_COUNT = 24;
+const PREVIEW_COUNT = 24
 
 interface PrintCardProps {
-  tokenId: number;
-  onSelect: (tokenId: number) => void;
+  tokenId: number
+  onSelect: (tokenId: number) => void
 }
 
 function PrintCard({ tokenId, onSelect }: PrintCardProps) {
@@ -16,33 +16,49 @@ function PrintCard({ tokenId, onSelect }: PrintCardProps) {
       className="group w-full text-left focus:outline-none focus:ring-1 focus:ring-white/30"
     >
       <div className="relative overflow-hidden border border-[#f4f0e8]/10 bg-[#f4f0e8]/[0.03] group-hover:border-[#24b5d8]/70 transition-colors">
-        <ArtworkCanvas seed={seedFromTokenId(tokenId)} tokenId={tokenId} size={200} className="gallery-artwork transition-transform duration-700 ease-out group-hover:scale-110" />
+        <ArtworkCanvas
+          seed={seedFromTokenId(tokenId)}
+          tokenId={tokenId}
+          size={200}
+          className="gallery-artwork transition-transform duration-700 ease-out group-hover:scale-110"
+        />
       </div>
       <p className="font-mono text-[9px] tracking-[0.2em] text-[#f4f0e8]/35 mt-2 group-hover:text-[#c5ff4e] transition-colors">
-        #{String(tokenId).padStart(4, '0')}
+        #{String(tokenId).padStart(4, "0")}
       </p>
     </button>
-  );
+  )
 }
 
 interface DetailModalProps {
-  tokenId: number;
-  onClose: () => void;
+  tokenId: number
+  onClose: () => void
 }
 
 function DetailModal({ tokenId, onClose }: DetailModalProps) {
-  const seed = seedFromTokenId(tokenId);
-  const result = generate(seed, tokenId);
-  const attrs = result.metadata.attributes;
+  const seed = seedFromTokenId(tokenId)
+  const result = generate(seed, tokenId)
+  const attrs = result.metadata.attributes
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [onClose])
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Wallet Print #${String(tokenId).padStart(4, "0")} details`}
       className="fixed inset-0 z-50 bg-[#080808]/95 backdrop-blur-sm flex items-center justify-center p-6"
       onClick={onClose}
     >
       <div
         className="relative max-w-2xl w-full flex flex-col md:flex-row gap-8"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex-shrink-0">
           <ArtworkCanvas seed={seed} tokenId={tokenId} size={300} />
@@ -54,15 +70,22 @@ function DetailModal({ tokenId, onClose }: DetailModalProps) {
               WALLET PRINT
             </p>
             <h2 className="font-display text-3xl font-black tracking-tight text-white uppercase">
-              #{String(tokenId).padStart(4, '0')}
+              #{String(tokenId).padStart(4, "0")}
             </h2>
           </div>
 
           <div className="space-y-0">
             {attrs.map(({ trait_type, value }) => (
-              <div key={trait_type} className="flex justify-between items-center py-2 border-b border-white/6">
-                <span className="font-mono text-[9px] tracking-[0.2em] text-white/25 uppercase">{trait_type}</span>
-                <span className="font-mono text-[9px] tracking-[0.1em] text-white/55 uppercase">{value}</span>
+              <div
+                key={trait_type}
+                className="flex justify-between items-center py-2 border-b border-white/6"
+              >
+                <span className="font-mono text-[9px] tracking-[0.2em] text-white/25 uppercase">
+                  {trait_type}
+                </span>
+                <span className="font-mono text-[9px] tracking-[0.1em] text-white/55 uppercase">
+                  {value}
+                </span>
               </div>
             ))}
           </div>
@@ -76,21 +99,22 @@ function DetailModal({ tokenId, onClose }: DetailModalProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export function Gallery() {
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selected, setSelected] = useState<number | null>(null)
 
   return (
     <section id="gallery" className="px-6 py-32 max-w-6xl mx-auto">
       <div className="mb-12">
-        <p className="section-kicker mb-3">/ 02 — observed outputs</p>
+        <p className="section-kicker mb-3">/ 03 — possible outputs</p>
         <h2 className="font-display text-[clamp(2rem,6vw,5rem)] font-black leading-none tracking-tight text-[#f4f0e8] uppercase mb-3">
-          THE PRINTS
+          PREVIEWS
         </h2>
         <p className="font-mono text-[10px] tracking-[0.3em] text-[#f4f0e8]/40 uppercase">
-          {PREVIEW_COUNT} of {(6767).toLocaleString()} shown
+          Algorithm previews — not minted tokens. Real prints use the on-chain
+          seed from commit-reveal.
         </p>
       </div>
 
@@ -104,5 +128,5 @@ export function Gallery() {
         <DetailModal tokenId={selected} onClose={() => setSelected(null)} />
       )}
     </section>
-  );
+  )
 }
