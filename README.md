@@ -84,7 +84,7 @@ forge verify-contract <address> src/WalletPrint.sol:WalletPrint \
 | Network | Chain ID | Contract | Explorer |
 | --- | --- | --- | --- |
 | Robinhood Chain Testnet | `46630` | `0xf0f055501841E1cB95Afbec8bF28A2b85B4953a3` | [Blockscout](https://explorer.testnet.chain.robinhood.com/address/0xf0f055501841E1cB95Afbec8bF28A2b85B4953a3) |
-| Robinhood Chain Mainnet | `4663` | *TBD (deploy using command above)* | [Blockscout](https://robinhoodchain.blockscout.com) |
+| Robinhood Chain Mainnet | `4663` | `0xF391057A5C8C5045b84147560dDE7Ef609625f8E` | [Blockscout](https://robinhoodchain.blockscout.com/address/0xF391057A5C8C5045b84147560dDE7Ef609625f8E) |
 
 ### What differs on this chain
 
