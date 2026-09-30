@@ -7,6 +7,7 @@ import {
   useSwitchChain,
 } from "wagmi"
 import { injected } from "wagmi/connectors"
+import { Analytics } from "@vercel/analytics/react"
 import { Nav } from "./components/Nav"
 import { Landing } from "./components/sections/Landing"
 import { MintSection } from "./components/sections/MintSection"
@@ -96,6 +97,7 @@ export default function App() {
 
   return (
     <div className="relative z-10 min-h-screen bg-[#101311] text-[#f4f0e8]">
+      <Analytics />
       <Nav
         onConnectWallet={handleConnectWallet}
         walletAddress={walletAddress}
